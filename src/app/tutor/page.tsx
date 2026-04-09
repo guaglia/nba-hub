@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Mic } from "lucide-react";
+import { ArrowLeft, Mic, Square } from "lucide-react";
+import { useConversation } from "@/hooks/use-conversation";
+
+const AGENT_ID = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID || "agent_0201kmp1t8hve4v9890pq2t4w994";
 
 const suggestions = [
   "¿Quién va primero en el Este?",
@@ -15,12 +18,22 @@ const suggestions = [
 
 export default function TutorPage() {
   const router = useRouter();
+  const { status, mode, inputVolume, outputVolume, start, stop } = useConversation(AGENT_ID);
   const [activeIdx, setActiveIdx] = useState(0);
   const [visible, setVisible] = useState(true);
-  const [talking, setTalking] = useState(false);
-  const agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID || "agent_0201kmp1t8hve4v9890pq2t4w994";
+
+  const isDisconnected = status === "disconnected";
+  const isConnecting = status === "connecting";
+  const isConnected = status === "connected";
+  const isSpeaking = mode === "speaking";
+
+  const volume = isSpeaking ? outputVolume : inputVolume;
+  const orbScale = 1 + volume * 0.12;
+  const glowOpacity = isConnected ? 0.3 + volume * 0.4 : 0.3;
+  const ringOpacity = isConnected ? 0.4 + volume * 0.5 : 0.15;
 
   useEffect(() => {
+    if (!isDisconnected) return;
     const interval = setInterval(() => {
       setVisible(false);
       setTimeout(() => {
@@ -29,60 +42,41 @@ export default function TutorPage() {
       }, 400);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    if (!talking) return;
-    const script = document.createElement("script");
-    script.src = "https://elevenlabs.io/convai-widget/index.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => { document.body.removeChild(script); };
-  }, [talking]);
+  }, [isDisconnected]);
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
-      {/* Basketball court background — SVG top-down view */}
+      {/* Basketball court background */}
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.07]">
         <svg width="480" height="900" viewBox="0 0 480 900" fill="none" className="w-full h-full">
-          {/* Court outline */}
           <rect x="40" y="100" width="400" height="700" rx="0" stroke="#F97316" strokeWidth="2" fill="none" />
-          {/* Center line */}
           <line x1="40" y1="450" x2="440" y2="450" stroke="#F97316" strokeWidth="2" />
-          {/* Center circle */}
           <circle cx="240" cy="450" r="60" stroke="#F97316" strokeWidth="2" fill="none" />
           <circle cx="240" cy="450" r="6" fill="#F97316" />
-          {/* Top three-point arc */}
           <path d="M 100 100 L 100 280 Q 100 380 240 380 Q 380 380 380 280 L 380 100" stroke="#F97316" strokeWidth="2" fill="none" />
-          {/* Top key */}
           <rect x="160" y="100" width="160" height="190" stroke="#F97316" strokeWidth="2" fill="none" />
-          {/* Top free throw circle */}
           <circle cx="240" cy="290" r="60" stroke="#F97316" strokeWidth="1.5" fill="none" strokeDasharray="6 6" />
-          {/* Top basket */}
           <circle cx="240" cy="140" r="12" stroke="#F97316" strokeWidth="2" fill="none" />
-          {/* Bottom three-point arc */}
           <path d="M 100 800 L 100 620 Q 100 520 240 520 Q 380 520 380 620 L 380 800" stroke="#F97316" strokeWidth="2" fill="none" />
-          {/* Bottom key */}
           <rect x="160" y="610" width="160" height="190" stroke="#F97316" strokeWidth="2" fill="none" />
-          {/* Bottom free throw circle */}
           <circle cx="240" cy="610" r="60" stroke="#F97316" strokeWidth="1.5" fill="none" strokeDasharray="6 6" />
-          {/* Bottom basket */}
           <circle cx="240" cy="760" r="12" stroke="#F97316" strokeWidth="2" fill="none" />
         </svg>
       </div>
 
-      {/* Ambient light glow in center */}
+      {/* Ambient light glow */}
       <div
-        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full"
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full transition-opacity duration-300"
         style={{
           background: "radial-gradient(circle, rgba(249,115,22,0.08) 0%, transparent 70%)",
+          opacity: isConnected ? 1.5 : 1,
         }}
       />
 
       {/* Header */}
       <div className="relative z-10 flex items-center gap-3 px-4 pt-6 mb-4">
         <button
-          onClick={() => router.back()}
+          onClick={() => { stop(); router.back(); }}
           className="w-10 h-10 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center"
         >
           <ArrowLeft size={20} />
@@ -90,17 +84,20 @@ export default function TutorPage() {
         <h1 className="font-bold text-[15px] text-white/80">Volver</h1>
       </div>
 
-      {/* Main content — centered orb */}
+      {/* Main content */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6">
         {/* Orb glow behind */}
         <div
-          className="absolute w-[280px] h-[280px] rounded-full blur-[60px] opacity-30"
+          className="absolute w-[280px] h-[280px] rounded-full blur-[60px] transition-opacity duration-200"
           style={{
-            background: "radial-gradient(circle, #F97316 0%, #EA580C 40%, transparent 70%)",
+            background: isConnected && isSpeaking
+              ? "radial-gradient(circle, #3B82F6 0%, #1D4ED8 40%, transparent 70%)"
+              : "radial-gradient(circle, #F97316 0%, #EA580C 40%, transparent 70%)",
+            opacity: glowOpacity,
           }}
         />
 
-        {/* Title — above the orb */}
+        {/* Title */}
         <h2 className="text-[13px] text-white/40 font-medium tracking-wide uppercase mb-1">
           Tu Experto NBA
         </h2>
@@ -108,12 +105,13 @@ export default function TutorPage() {
           Domingo
         </h3>
 
-        {/* Orb ring */}
+        {/* Orb ring — reacts to voice */}
         <div
-          className="relative w-[220px] h-[220px] rounded-full flex items-center justify-center mb-10"
+          className="relative w-[220px] h-[220px] rounded-full flex items-center justify-center mb-10 transition-transform duration-100"
           style={{
-            background: "conic-gradient(from 180deg, rgba(249,115,22,0.15), rgba(249,115,22,0.4), rgba(234,88,12,0.6), rgba(249,115,22,0.4), rgba(249,115,22,0.15))",
+            background: `conic-gradient(from 180deg, rgba(249,115,22,${ringOpacity * 0.4}), rgba(249,115,22,${ringOpacity}), rgba(234,88,12,${ringOpacity * 1.5}), rgba(249,115,22,${ringOpacity}), rgba(249,115,22,${ringOpacity * 0.4}))`,
             padding: 3,
+            transform: `scale(${orbScale})`,
           }}
         >
           {/* Inner orb — Domingo's avatar */}
@@ -124,18 +122,36 @@ export default function TutorPage() {
               alt="Domingo"
               className="w-full h-full object-cover object-top"
             />
-            {/* Orange tint overlay for cohesion */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[rgba(160,74,8,0.4)]" />
+            {/* Overlay — changes color when speaking */}
+            <div
+              className="absolute inset-0 transition-all duration-300"
+              style={{
+                background: isConnected && isSpeaking
+                  ? "radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(29,78,216,0.3) 100%)"
+                  : isConnected
+                    ? "radial-gradient(circle, rgba(34,197,94,0.1) 0%, rgba(0,0,0,0.1) 100%)"
+                    : "linear-gradient(to bottom, transparent 50%, rgba(160,74,8,0.4) 100%)",
+              }}
+            />
           </div>
         </div>
 
-        {/* CTA Button or active widget */}
-        <div className="-mt-6 relative z-20">
-          {!talking ? (
-            <button
-              onClick={() => setTalking(true)}
-              className="relative group"
-            >
+        {/* Status text when connected */}
+        {isConnected && (
+          <p className="text-[12px] font-medium uppercase tracking-widest text-white/40 -mt-6 mb-6 animate-fade-in-up">
+            {isSpeaking ? "Domingo está hablando..." : "Escuchando..."}
+          </p>
+        )}
+        {isConnecting && (
+          <p className="text-[12px] font-medium uppercase tracking-widest text-white/40 -mt-6 mb-6 animate-fade-in-up">
+            Conectando...
+          </p>
+        )}
+
+        {/* CTA Button */}
+        <div className="relative z-20">
+          {isDisconnected && (
+            <button onClick={start} className="relative group">
               <div
                 className="absolute -inset-1 rounded-full blur-md opacity-40 group-active:opacity-60 transition-opacity"
                 style={{ background: "linear-gradient(135deg, #F97316, #EA580C)" }}
@@ -148,22 +164,32 @@ export default function TutorPage() {
                 <span className="text-[15px] font-bold text-white">Hablemos de NBA</span>
               </div>
             </button>
-          ) : (
-            <div className="flex flex-col items-center gap-4">
-              {/* @ts-expect-error custom web component */}
-              <elevenlabs-convai agent-id={agentId} />
-              <button
-                onClick={() => setTalking(false)}
-                className="text-[13px] text-white/40 hover:text-white/70 transition-colors"
-              >
-                Terminar conversación
-              </button>
+          )}
+
+          {isConnecting && (
+            <div
+              className="flex items-center gap-3 px-8 py-4 rounded-full border border-white/10"
+              style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(16px)" }}
+            >
+              <div className="w-4 h-4 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+              <span className="text-[15px] font-medium text-white/60">Conectando...</span>
             </div>
+          )}
+
+          {isConnected && (
+            <button
+              onClick={stop}
+              className="flex items-center gap-3 px-8 py-4 rounded-full border border-white/10 transition-colors hover:border-red-500/30 hover:bg-red-500/10"
+              style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(16px)" }}
+            >
+              <Square size={14} className="text-white/60" fill="currentColor" />
+              <span className="text-[15px] font-medium text-white/60">Terminar</span>
+            </button>
           )}
         </div>
 
-        {/* Animated suggestion */}
-        {!talking && (
+        {/* Animated suggestion — only when disconnected */}
+        {isDisconnected && (
           <div className="mt-10 h-8 flex items-center justify-center">
             <span
               className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[13px] text-white/40 font-medium italic transition-opacity duration-400"
