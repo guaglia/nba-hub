@@ -13,7 +13,7 @@ const features = [
     title: "Domingo, tu experto NBA por voz",
     description:
       "Un tutor conversacional que responde cualquier pregunta sobre la NBA hablando. Resultados, historia, jugadores. Una experiencia única impulsada por inteligencia artificial.",
-    screenshot: "/screenshots/tutor.png",
+    screenshot: "/experiences/nba/screenshots/tutor.png",
     color: "#A855F7",
     image: "https://tutores-ai-alpha.vercel.app/_next/image?url=%2Ftutors%2Fdomingo-nba.png&w=3840&q=75",
   },
@@ -22,7 +22,7 @@ const features = [
     title: "Cada partido, en tiempo real",
     description:
       "Resultados en vivo, estadísticas detalladas, forma reciente y enfrentamientos directos. Todo lo que tu usuario necesita para vivir la NBA.",
-    screenshot: "/screenshots/home.png",
+    screenshot: "/experiences/nba/screenshots/home.png",
     color: "#22C55E",
   },
   {
@@ -30,7 +30,7 @@ const features = [
     title: "Predicciones que enganchan",
     description:
       "Los usuarios predicen resultados de 6 partidos semanales, compiten en un leaderboard y usan IA para mejorar sus picks. Retención y engagement real.",
-    screenshot: "/screenshots/super6.png",
+    screenshot: "/experiences/nba/screenshots/super6.png",
     color: "#F97316",
   },
   {
@@ -38,7 +38,7 @@ const features = [
     title: "Contenido editorial premium",
     description:
       "Feed de noticias NBA con artículos completos, imágenes y botones de compartir. Los usuarios se quedan dentro de la app con contenido fresco cada día.",
-    screenshot: "/screenshots/noticias.png",
+    screenshot: "/experiences/nba/screenshots/noticias.png",
     color: "#3B82F6",
   },
 ];
@@ -139,7 +139,7 @@ export default function ShowcasePage() {
           <div className="relative w-[140px] sm:w-[180px] -mb-8 -rotate-3 hidden sm:block">
             <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/screenshots/super6-detail.png" alt="Super6" className="w-full" />
+              <img src="/experiences/nba/screenshots/super6-detail.png" alt="Super6" className="w-full" />
             </div>
             {/* Bottom fade */}
             <div className="absolute bottom-0 left-0 right-0 h-[45%] bg-gradient-to-t from-[#050507] via-[#050507]/80 to-transparent pointer-events-none" />
@@ -149,7 +149,7 @@ export default function ShowcasePage() {
           <div className="relative w-[240px] sm:w-[280px]">
             <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/screenshots/home.png" alt="NBA Hub Home" className="w-full" />
+              <img src="/experiences/nba/screenshots/home.png" alt="NBA Hub Home" className="w-full" />
             </div>
             {/* Bottom fade */}
             <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-[#050507] via-[#050507]/80 to-transparent pointer-events-none" />
@@ -164,7 +164,7 @@ export default function ShowcasePage() {
           <div className="relative w-[140px] sm:w-[180px] -mb-8 rotate-3 hidden sm:block">
             <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/screenshots/leaderboard.png" alt="Leaderboard" className="w-full" />
+              <img src="/experiences/nba/screenshots/leaderboard.png" alt="Leaderboard" className="w-full" />
             </div>
             {/* Bottom fade */}
             <div className="absolute bottom-0 left-0 right-0 h-[45%] bg-gradient-to-t from-[#050507] via-[#050507]/80 to-transparent pointer-events-none" />
