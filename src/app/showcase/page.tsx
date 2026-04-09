@@ -1,13 +1,26 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { TeamLogo } from "@/components/ui/TeamLogo";
+
+const cycleTeams = ["OKC", "BOS", "LAL", "DET", "SAS", "NYK", "DEN", "CLE", "MIA", "GSW"];
 
 const features = [
+  {
+    tag: "Tutor AI",
+    title: "Domingo, tu experto NBA por voz",
+    description:
+      "Un tutor conversacional que responde cualquier pregunta sobre la NBA hablando. Resultados, historia, jugadores. Una experiencia única impulsada por inteligencia artificial.",
+    screenshot: "/screenshots/tutor.png",
+    color: "#A855F7",
+    image: "https://tutores-ai-alpha.vercel.app/_next/image?url=%2Ftutors%2Fdomingo-nba.png&w=3840&q=75",
+  },
   {
     tag: "Scores en Vivo",
     title: "Cada partido, en tiempo real",
     description:
-      "Resultados en vivo, estadísticas detalladas, forma reciente y enfrentamientos directos. Todo lo que tu usuario necesita para vivir la NBA al máximo.",
+      "Resultados en vivo, estadísticas detalladas, forma reciente y enfrentamientos directos. Todo lo que tu usuario necesita para vivir la NBA.",
     screenshot: "/screenshots/home.png",
     color: "#22C55E",
   },
@@ -15,7 +28,7 @@ const features = [
     tag: "Super6",
     title: "Predicciones que enganchan",
     description:
-      "Tus usuarios predicen los resultados de 6 partidos semanales, compiten en un leaderboard y usan IA para mejorar sus picks. Retención y engagement garantizados.",
+      "Los usuarios predicen resultados de 6 partidos semanales, compiten en un leaderboard y usan IA para mejorar sus picks. Retención y engagement real.",
     screenshot: "/screenshots/super6.png",
     color: "#F97316",
   },
@@ -23,17 +36,9 @@ const features = [
     tag: "Noticias",
     title: "Contenido editorial premium",
     description:
-      "Feed de noticias NBA con artículos completos, imágenes y botones de compartir. Mantiene a los usuarios dentro de la app con contenido fresco cada día.",
+      "Feed de noticias NBA con artículos completos, imágenes y botones de compartir. Los usuarios se quedan dentro de la app con contenido fresco cada día.",
     screenshot: "/screenshots/noticias.png",
     color: "#3B82F6",
-  },
-  {
-    tag: "Tutor AI",
-    title: "Domingo, tu experto NBA por voz",
-    description:
-      "Un tutor conversacional con IA que responde cualquier pregunta sobre la NBA por voz. Resultados, historia, jugadores — una experiencia única impulsada por ElevenLabs.",
-    screenshot: "/screenshots/tutor.png",
-    color: "#A855F7",
   },
 ];
 
@@ -41,15 +46,29 @@ const stats = [
   { value: "30", label: "Equipos NBA" },
   { value: "5+", label: "Partidos diarios" },
   { value: "AI", label: "Tutor por voz" },
-  { value: "0", label: "Latencia percibida" },
+  { value: "0ms", label: "Latencia percibida" },
 ];
 
 export default function ShowcasePage() {
+  const [teamIdx, setTeamIdx] = useState(0);
+  const [teamVisible, setTeamVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTeamVisible(false);
+      setTimeout(() => {
+        setTeamIdx((i) => (i + 1) % cycleTeams.length);
+        setTeamVisible(true);
+      }, 300);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#050507] text-white overflow-hidden">
       {/* Hero */}
       <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-6 text-center">
-        {/* Background glow */}
+        {/* Background glows */}
         <div
           className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-20 blur-[120px]"
           style={{ background: "radial-gradient(circle, #F97316 0%, #EA580C 40%, transparent 70%)" }}
@@ -63,11 +82,22 @@ export default function ShowcasePage() {
         <div className="relative z-10 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8">
             <span className="w-2 h-2 rounded-full bg-[#F97316]" />
-            <span className="text-[13px] text-white/60 font-medium">Value Added Service — NBA</span>
+            <span className="text-[13px] text-white/60 font-medium">Value Added Service</span>
           </div>
 
           <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight leading-[1.05] mb-6">
-            La experiencia NBA
+            La experiencia{" "}
+            <span className="inline-flex items-center gap-3">
+              <span className="bg-gradient-to-r from-[#F97316] via-[#FB923C] to-[#FBBF24] bg-clip-text text-transparent">
+                NBA
+              </span>
+              <span
+                className="inline-block transition-opacity duration-300"
+                style={{ opacity: teamVisible ? 1 : 0 }}
+              >
+                <TeamLogo abbrev={cycleTeams[teamIdx]} size={56} />
+              </span>
+            </span>
             <br />
             <span className="bg-gradient-to-r from-[#F97316] via-[#FB923C] to-[#FBBF24] bg-clip-text text-transparent">
               que tus usuarios merecen
@@ -109,7 +139,6 @@ export default function ShowcasePage() {
               }}
             />
           </div>
-          {/* Glow behind phone */}
           <div
             className="absolute -inset-8 -z-10 rounded-full blur-[60px] opacity-20"
             style={{ background: "radial-gradient(circle, #F97316, transparent 70%)" }}
@@ -118,14 +147,14 @@ export default function ShowcasePage() {
       </section>
 
       {/* Stats bar */}
-      <section className="relative py-16 border-y border-white/5">
+      <section className="relative py-20 border-y border-white/5">
         <div className="max-w-4xl mx-auto px-6 grid grid-cols-2 sm:grid-cols-4 gap-8">
           {stats.map((stat) => (
             <div key={stat.label} className="text-center">
-              <p className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent">
+              <p className="text-[60px] font-extrabold leading-none bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent">
                 {stat.value}
               </p>
-              <p className="text-[13px] text-white/40 mt-1">{stat.label}</p>
+              <p className="text-[14px] text-white/40 mt-2">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -147,7 +176,7 @@ export default function ShowcasePage() {
                 key={feature.tag}
                 className={`flex flex-col ${i % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"} items-center gap-12 lg:gap-20`}
               >
-                {/* Screenshot */}
+                {/* Screenshot or custom image */}
                 <div className="relative flex-1 max-w-sm">
                   <div
                     className="rounded-3xl overflow-hidden border border-white/10"
@@ -157,9 +186,10 @@ export default function ShowcasePage() {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={feature.screenshot}
+                      src={feature.image || feature.screenshot}
                       alt={feature.tag}
                       className="w-full"
+                      style={{ objectFit: "cover", minHeight: feature.image ? 300 : undefined }}
                       onError={(e) => {
                         const el = e.target as HTMLImageElement;
                         el.style.display = "none";
@@ -168,7 +198,6 @@ export default function ShowcasePage() {
                       }}
                     />
                   </div>
-                  {/* Background glow */}
                   <div
                     className="absolute -inset-12 -z-10 rounded-full blur-[80px] opacity-15"
                     style={{ background: feature.color }}
@@ -204,14 +233,14 @@ export default function ShowcasePage() {
             Listo para tu plataforma
           </h2>
           <p className="text-lg text-white/50 leading-relaxed mb-12 max-w-xl mx-auto">
-            NBA Hub se integra como un servicio de valor agregado en cualquier carrier
-            de telecomunicaciones. White-label, mobile-first, sin fricción.
+            NBA Hub se integra como servicio de valor agregado en cualquier carrier
+            de telecomunicaciones. Personalizable, mobile-first, sin fricción.
           </p>
 
           <div className="grid sm:grid-cols-3 gap-4">
             {[
               { title: "White Label", desc: "Personalizable con tu marca y colores corporativos" },
-              { title: "Mobile First", desc: "Diseñado para cualquier dispositivo, sin descargas" },
+              { title: "Mobile First", desc: "Pensado para cualquier dispositivo, sin descargas" },
               { title: "AI Powered", desc: "Tutor conversacional que diferencia tu oferta" },
             ].map((item) => (
               <div
@@ -238,7 +267,7 @@ export default function ShowcasePage() {
               Probalo ahora
             </h2>
             <p className="text-lg text-white/50 mb-10">
-              Explorá el demo completo y descubrí lo que NBA Hub puede hacer por tus usuarios.
+              Explora el demo completo y descubri lo que NBA Hub puede hacer por tus usuarios.
             </p>
             <Link
               href="/home"
@@ -254,7 +283,7 @@ export default function ShowcasePage() {
       {/* Footer */}
       <footer className="py-8 px-6 border-t border-white/5 text-center">
         <p className="text-[12px] text-white/20">
-          NBA Hub — Prototipo de demostración VAS
+          NBA Hub · Prototipo VAS
         </p>
       </footer>
     </div>
