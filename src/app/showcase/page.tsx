@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { TeamLogo } from "@/components/ui/TeamLogo";
 import { Lock, Eye, EyeOff } from "lucide-react";
@@ -309,8 +310,8 @@ export default function ShowcasePage() {
         </p>
       </footer>
 
-      {/* Password Modal — portal-style fixed overlay */}
-      {showPassword && (
+      {/* Password Modal — rendered via portal to escape transformed parents */}
+      {showPassword && createPortal(
         <div
           className="fixed inset-0 flex items-center justify-center px-6"
           style={{ zIndex: 9999 }}
@@ -374,7 +375,8 @@ export default function ShowcasePage() {
               Acceder
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
