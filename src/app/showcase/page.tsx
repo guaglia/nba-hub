@@ -133,23 +133,42 @@ export default function ShowcasePage() {
           </div>
         </div>
 
-        {/* Hero screenshot */}
-        <div className="relative z-10 mt-16 max-w-sm mx-auto">
-          <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/screenshots/hero.png"
-              alt="NBA Hub Preview"
-              className="w-full"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
+        {/* Hero phones — 3 spread out */}
+        <div className="relative z-10 mt-16 flex items-end justify-center gap-4 sm:gap-6">
+          {/* Left phone — smaller, tilted */}
+          <div className="relative w-[140px] sm:w-[180px] -mb-8 -rotate-3 hidden sm:block">
+            <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/screenshots/super6-detail.png" alt="Super6" className="w-full" />
+            </div>
+            {/* Bottom fade */}
+            <div className="absolute bottom-0 left-0 right-0 h-[45%] bg-gradient-to-t from-[#050507] via-[#050507]/80 to-transparent pointer-events-none" />
+          </div>
+
+          {/* Center phone — main, larger */}
+          <div className="relative w-[240px] sm:w-[280px]">
+            <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/screenshots/home.png" alt="NBA Hub Home" className="w-full" />
+            </div>
+            {/* Bottom fade */}
+            <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-[#050507] via-[#050507]/80 to-transparent pointer-events-none" />
+            {/* Glow behind */}
+            <div
+              className="absolute -inset-10 -z-10 rounded-full blur-[60px] opacity-20"
+              style={{ background: "radial-gradient(circle, #F97316, transparent 70%)" }}
             />
           </div>
-          <div
-            className="absolute -inset-8 -z-10 rounded-full blur-[60px] opacity-20"
-            style={{ background: "radial-gradient(circle, #F97316, transparent 70%)" }}
-          />
+
+          {/* Right phone — smaller, tilted */}
+          <div className="relative w-[140px] sm:w-[180px] -mb-8 rotate-3 hidden sm:block">
+            <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/screenshots/leaderboard.png" alt="Leaderboard" className="w-full" />
+            </div>
+            {/* Bottom fade */}
+            <div className="absolute bottom-0 left-0 right-0 h-[45%] bg-gradient-to-t from-[#050507] via-[#050507]/80 to-transparent pointer-events-none" />
+          </div>
         </div>
       </section>
 
