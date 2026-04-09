@@ -316,8 +316,13 @@ export default function ShowcasePage() {
           className="fixed inset-0 flex items-center justify-center px-6"
           style={{ zIndex: 9999 }}
           ref={(el) => {
-            if (el) document.body.style.overflow = "hidden";
-            else document.body.style.overflow = "";
+            if (el) {
+              document.documentElement.style.overflow = "hidden";
+              document.body.style.overflow = "hidden";
+            } else {
+              document.documentElement.style.overflow = "";
+              document.body.style.overflow = "";
+            }
           }}
         >
           <div
