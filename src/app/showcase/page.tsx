@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { TeamLogo } from "@/components/ui/TeamLogo";
+import { Lock, Eye, EyeOff } from "lucide-react";
 
 const cycleTeams = ["OKC", "BOS", "LAL", "DET", "SAS", "NYK", "DEN", "CLE", "MIA", "GSW"];
 
@@ -50,8 +51,14 @@ const stats = [
 ];
 
 export default function ShowcasePage() {
+  const router = useRouter();
   const [teamIdx, setTeamIdx] = useState(0);
   const [teamVisible, setTeamVisible] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+  const [showPw, setShowPw] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -95,7 +102,7 @@ export default function ShowcasePage() {
                 className="inline-block transition-opacity duration-300"
                 style={{ opacity: teamVisible ? 1 : 0 }}
               >
-                <TeamLogo abbrev={cycleTeams[teamIdx]} size={56} />
+                <TeamLogo abbrev={cycleTeams[teamIdx]} size={112} />
               </span>
             </span>
             <br />
@@ -110,13 +117,13 @@ export default function ShowcasePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/home"
-              className="px-8 py-4 rounded-2xl text-[15px] font-bold text-white"
+            <button
+              onClick={() => { setShowPassword(true); setTimeout(() => inputRef.current?.focus(), 100); }}
+              className="px-8 py-4 rounded-2xl text-[15px] font-bold text-white cursor-pointer"
               style={{ background: "linear-gradient(135deg, #F97316, #EA580C)" }}
             >
               Ver Demo en Vivo
-            </Link>
+            </button>
             <a
               href="#features"
               className="px-8 py-4 rounded-2xl text-[15px] font-semibold text-white/70 bg-white/5 border border-white/10 backdrop-blur-sm"
@@ -269,13 +276,13 @@ export default function ShowcasePage() {
             <p className="text-lg text-white/50 mb-10">
               Explora el demo completo y descubri lo que NBA Hub puede hacer por tus usuarios.
             </p>
-            <Link
-              href="/home"
-              className="inline-block px-10 py-5 rounded-2xl text-[16px] font-bold text-white"
+            <button
+              onClick={() => { setShowPassword(true); setTimeout(() => inputRef.current?.focus(), 100); }}
+              className="inline-block px-10 py-5 rounded-2xl text-[16px] font-bold text-white cursor-pointer"
               style={{ background: "linear-gradient(135deg, #F97316, #EA580C)" }}
             >
               Abrir NBA Hub
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -286,6 +293,67 @@ export default function ShowcasePage() {
           NBA Hub · Prototipo VAS
         </p>
       </footer>
+
+      {/* Password Modal */}
+      {showPassword && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-md"
+            onClick={() => { setShowPassword(false); setPassword(""); setPasswordError(false); }}
+          />
+          <div className="relative bg-[#0d0d14] border border-white/10 rounded-3xl p-8 w-full max-w-sm animate-fade-in-up">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-[#F97316]/10 mx-auto mb-5">
+              <Lock size={24} className="text-[#F97316]" />
+            </div>
+            <h3 className="text-xl font-extrabold text-center mb-2">Acceso al Demo</h3>
+            <p className="text-[13px] text-white/40 text-center mb-6">Ingresa la clave para acceder a la experiencia</p>
+
+            <div className="relative mb-4">
+              <input
+                ref={inputRef}
+                type={showPw ? "text" : "password"}
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); setPasswordError(false); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    if (password === "OWLAI!NBA") {
+                      router.push("/home");
+                    } else {
+                      setPasswordError(true);
+                    }
+                  }
+                }}
+                placeholder="Clave de acceso"
+                className={`w-full px-4 py-3.5 rounded-xl bg-white/5 border ${passwordError ? "border-red-500/50" : "border-white/10"} text-white text-[15px] placeholder:text-white/25 outline-none focus:border-[#F97316]/40 transition-colors`}
+              />
+              <button
+                onClick={() => setShowPw(!showPw)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"
+              >
+                {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            {passwordError && (
+              <p className="text-[13px] text-red-400 mb-4 text-center">Clave incorrecta</p>
+            )}
+
+            <button
+              onClick={() => {
+                if (password === "OWLAI!NBA") {
+                  router.push("/home");
+                } else {
+                  setPasswordError(true);
+                }
+              }}
+              className="w-full py-3.5 rounded-xl text-[15px] font-bold text-white cursor-pointer"
+              style={{ background: "linear-gradient(135deg, #F97316, #EA580C)" }}
+            >
+              Acceder
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
