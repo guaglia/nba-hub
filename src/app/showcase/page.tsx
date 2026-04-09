@@ -309,9 +309,16 @@ export default function ShowcasePage() {
         </p>
       </footer>
 
-      {/* Password Modal */}
+      {/* Password Modal — portal-style fixed overlay */}
       {showPassword && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
+        <div
+          className="fixed inset-0 flex items-center justify-center px-6"
+          style={{ zIndex: 9999 }}
+          ref={(el) => {
+            if (el) document.body.style.overflow = "hidden";
+            else document.body.style.overflow = "";
+          }}
+        >
           <div
             className="absolute inset-0 bg-black/70 backdrop-blur-md"
             onClick={() => { setShowPassword(false); setPassword(""); setPasswordError(false); }}
