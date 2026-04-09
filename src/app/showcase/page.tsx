@@ -53,7 +53,6 @@ const stats = [
 export default function ShowcasePage() {
   const router = useRouter();
   const [teamIdx, setTeamIdx] = useState(0);
-  const [teamVisible, setTeamVisible] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
@@ -62,11 +61,7 @@ export default function ShowcasePage() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTeamVisible(false);
-      setTimeout(() => {
-        setTeamIdx((i) => (i + 1) % cycleTeams.length);
-        setTeamVisible(true);
-      }, 300);
+      setTeamIdx((i) => (i + 1) % cycleTeams.length);
     }, 2000);
     return () => clearInterval(interval);
   }, []);
@@ -92,22 +87,27 @@ export default function ShowcasePage() {
             <span className="text-[13px] text-white/60 font-medium">Value Added Service</span>
           </div>
 
-          <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight leading-[1.05] mb-6">
-            La experiencia{" "}
-            <span className="inline-flex items-center gap-3">
+          <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6">
+            La experiencia
+            <br />
+            <span className="inline-flex items-center gap-3 sm:gap-4">
               <span className="bg-gradient-to-r from-[#F97316] via-[#FB923C] to-[#FBBF24] bg-clip-text text-transparent">
                 NBA
               </span>
-              <span
-                className="inline-block transition-opacity duration-300"
-                style={{ opacity: teamVisible ? 1 : 0 }}
-              >
+              <span key={teamIdx} className="inline-block animate-fade-in-up">
                 <TeamLogo abbrev={cycleTeams[teamIdx]} size={112} />
+              </span>
+              <span className="bg-gradient-to-r from-[#F97316] via-[#FB923C] to-[#FBBF24] bg-clip-text text-transparent">
+                que
               </span>
             </span>
             <br />
             <span className="bg-gradient-to-r from-[#F97316] via-[#FB923C] to-[#FBBF24] bg-clip-text text-transparent">
-              que tus usuarios merecen
+              tus usuarios
+            </span>
+            <br />
+            <span className="bg-gradient-to-r from-[#F97316] via-[#FB923C] to-[#FBBF24] bg-clip-text text-transparent">
+              merecen
             </span>
           </h1>
 
@@ -133,40 +133,36 @@ export default function ShowcasePage() {
           </div>
         </div>
 
-        {/* Hero phones — 3 spread out */}
-        <div className="relative z-10 mt-16 flex items-end justify-center gap-4 sm:gap-6">
-          {/* Left phone — smaller, tilted */}
-          <div className="relative w-[140px] sm:w-[180px] -mb-8 -rotate-3 hidden sm:block">
+        {/* Hero phones — 3 tight together */}
+        <div className="relative z-10 mt-16 flex items-end justify-center -space-x-8 sm:-space-x-12">
+          {/* Left phone */}
+          <div className="relative w-[200px] sm:w-[240px] -rotate-2 hidden sm:block" style={{ marginBottom: -12 }}>
             <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/experiences/nba/screenshots/super6-detail.png" alt="Super6" className="w-full" />
             </div>
-            {/* Bottom fade */}
             <div className="absolute bottom-0 left-0 right-0 h-[45%] bg-gradient-to-t from-[#050507] via-[#050507]/80 to-transparent pointer-events-none" />
           </div>
 
-          {/* Center phone — main, larger */}
-          <div className="relative w-[240px] sm:w-[280px]">
+          {/* Center phone — main */}
+          <div className="relative z-10 w-[250px] sm:w-[290px]">
             <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/experiences/nba/screenshots/home.png" alt="NBA Hub Home" className="w-full" />
             </div>
-            {/* Bottom fade */}
             <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-[#050507] via-[#050507]/80 to-transparent pointer-events-none" />
-            {/* Glow behind */}
             <div
               className="absolute -inset-10 -z-10 rounded-full blur-[60px] opacity-20"
               style={{ background: "radial-gradient(circle, #F97316, transparent 70%)" }}
             />
           </div>
 
-          {/* Right phone — smaller, tilted */}
-          <div className="relative w-[140px] sm:w-[180px] -mb-8 rotate-3 hidden sm:block">
+          {/* Right phone */}
+          <div className="relative w-[200px] sm:w-[240px] rotate-2 hidden sm:block" style={{ marginBottom: -12 }}>
             <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/experiences/nba/screenshots/leaderboard.png" alt="Leaderboard" className="w-full" />
             </div>
-            {/* Bottom fade */}
             <div className="absolute bottom-0 left-0 right-0 h-[45%] bg-gradient-to-t from-[#050507] via-[#050507]/80 to-transparent pointer-events-none" />
           </div>
         </div>
